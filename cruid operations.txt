@@ -1,0 +1,99 @@
+ CRUD operations
+
+1. To list the database:
+
+> show dbs
+admin 0.000GB
+config 0.000GB
+customers 0.000GB
+local 0.000GB
+
+
+2. To create the database or use the existing database
+
+>use customer
+switched to db customer
+
+
+3. To create collection ( C(create) of CRUD )
+
+> db.createCollection("cust_details")
+{ "ok" : 1 }
+
+
+4. To Insert a Document
+
+>db.cust_details.insert( {  fname : "Divine ", lname : "Comed",  age : 30,  email : "abc@gmail.com",  phone : 1234556,  experience: 5} )
+
+
+5. To Insert Many Documents at a time
+
+>db.cust_details.insertMany( [ { doc1 }, { doc2 }, ..... , { docn } ] )
+
+
+6. To display the Documents. ( R(read) of CRUD )
+
+> db.cust_details.find()
+> db.cust_details.find().pretty()
+
+{
+	"_id" : ObjectId("606ed1ad5ac9b1ff7baaf123"),
+	"fname" : "Bharath",
+	"lname" : "Kumar",
+	"age" : 20,
+	"email" : "kumar@gmail.com",
+	"phone_no" : 9494035944,
+	"experiance" : 4
+}
+{
+	"_id" : ObjectId("606ed4855ac9b1ff7baaf124"),
+	"fname" : "Divine ",
+	"lname" : "Comed",
+	"age" : 30,
+	"email" : "abc@gmail.com",
+	"phone" : 1234556,
+	"experience" : 5
+}
+{
+	"_id" : ObjectId("606ed7625ac9b1ff7baaf125"),
+	"fname" : "Dsaa",
+	"lname" : "Revert",
+	"age" : 30,
+	"email" : "abuu@gmail.com",
+	"phone" : 1789242,
+	"experience" : 5
+}
+
+
+7. Inserting through Save Method
+
+> db.cust_details.save( { _id:ObjectId("606ed7f05ac9b1ff7baaf129"), fname:"Chinnu"})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+
+8. Update Operation
+
+a. Updating only the first found value.
+
+> db.cust_details.update( {age:30}, {$set: {age:25} } )
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+
+b. Updating all the values satisfying the condition.
+
+> db.cust_details.updateMany( {age:30}, {$set: {age:25} } )
+{ "acknowledged" : true, "matchedCount" : 2, "modifiedCount" : 2 }
+
+
+c. Updating any one value satisfying the condition.
+
+> db.cust_details.updateOne( {age:25}, {$set: {age:30} } )
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+
+
+9. Remove Operation
+
+a. Removing the first found value
+
+> db.cust_details.remove( {fname: "Bharath"} )
+WriteResult({ "nRemoved" : 1 })

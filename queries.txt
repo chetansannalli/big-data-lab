@@ -1,0 +1,70 @@
+
+
+
+                                             QUERIES
+
+Documents
+                                             
+> db.cust_pay_details.find().pretty()
+{
+	"_id" : ObjectId("607140bd5e98f148e41e263f"),
+	"cust_id" : "A123",
+	"amount" : 250,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("607140bd5e98f148e41e2640"),
+	"cust_id" : "A123",
+	"amount" : 300,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("607140db5e98f148e41e2641"),
+	"cust_id" : "B111",
+	"amount" : 150,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("607140db5e98f148e41e2642"),
+	"cust_id" : "A123",
+	"amount" : 350,
+	"status" : "D"
+}
+
+Query 1: Find all the customers whose account status is active.
+
+> db.cust_pay_details.aggregate(
+... [ { $match: {status: 'A'} } ] )
+
+{ "_id" : ObjectId("607140bd5e98f148e41e263f"), "cust_id" : "A123", "amount" : 250, "status" : "A" }
+{ "_id" : ObjectId("607140bd5e98f148e41e2640"), "cust_id" : "A123", "amount" : 300, "status" : "A" }
+{ "_id" : ObjectId("607140db5e98f148e41e2641"), "cust_id" : "B111", "amount" : 150, "status" : "A" }
+
+
+Query 2: Find all the customers who has maximum amount in the account.
+
+> db.cust_pay_details.aggregate(
+... [ { $group: { _id: "$cust_id", "max_value": { $max: "$amount" } } } ] )
+
+{ "_id" : "B111", "max_value" : 150 }
+{ "_id" : "A123", "max_value" : 350 }
+
+
+Query 3: Find all the customers who have active account and has maximum amount in the account.
+
+>db.cust_pay_details.aggregate( [ { $match: {status: 'A'} }, { $group: { _id: "$cust_id", "max_value": { $max: "$amount" } } } ] )
+
+{ "_id" : "B111", "max_value" : 150 }
+{ "_id" : "A123", "max_value" : 300 }
+
+or
+
+> db.cust_pay_details.aggregate( [ { $match: {status: 'A'} }, { $group: { _id: { cust_id: "$cust_id", status: "$status" }, "max_value": { $max: "$amount" } } } ] )
+
+{ "_id" : { "cust_id" : "A123", "status" : "A" }, "max_value" : 300 }
+{ "_id" : { "cust_id" : "B111", "status" : "A" }, "max_value" : 150 }
+
+
+
+queries.txt
+Displaying queries.txt.

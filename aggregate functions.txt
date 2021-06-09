@@ -1,0 +1,234 @@
+
+                                      Aggrigate Operations
+
+a. Match Operation
+
+> db.cust_details.aggregate( { $match: {age: 30} } ).pretty()
+{
+	"_id" : ObjectId("606ed4855ac9b1ff7baaf124"),
+	"fname" : "Divine ",
+	"lname" : "Comed",
+	"age" : 30,
+	"email" : "abc@gmail.com",
+	"phone" : 1234556,
+	"experience" : 5
+}
+{
+	"_id" : ObjectId("606ed7625ac9b1ff7baaf125"),
+	"fname" : "Dsaa",
+	"lname" : "Revert",
+	"age" : 30,
+	"email" : "abuu@gmail.com",
+	"phone" : 1789242,
+	"experience" : 5
+}
+
+
+
+b. Match and Greater than operations
+
+> db.cust_details.aggregate( { $match: { age: {$gt: 25} } } ).pretty() 
+{
+	"_id" : ObjectId("606ed4855ac9b1ff7baaf124"),
+	"fname" : "Divine ",
+	"lname" : "Comed",
+	"age" : 30,
+	"email" : "abc@gmail.com",
+	"phone" : 1234556,
+	"experience" : 5
+}
+{
+	"_id" : ObjectId("606ed7625ac9b1ff7baaf125"),
+	"fname" : "Dsaa",
+	"lname" : "Revert",
+	"age" : 30,
+	"email" : "abuu@gmail.com",
+	"phone" : 1789242,
+	"experience" : 5
+}
+{
+	"_id" : ObjectId("606ed7f05ac9b1ff7baaf126"),
+	"fname" : "Rewwe",
+	"lname" : "Urjufh",
+	"age" : 34,
+	"email" : "awewc@gmail.com",
+	"phone" : 123908756,
+	"experience" : 12
+}
+ 
+ 
+c. Group Operation
+ 
+> db.cust_details.aggregate( { $group: {_id: "$age"} } ).pretty()
+{ "_id" : 27 }
+{ "_id" : 24 }
+{ "_id" : 40 }
+{ "_id" : 34 }
+{ "_id" : 20 }
+{ "_id" : 30 }
+{ "_id" : null } 
+
+> db.cust_details.aggregate( { $group: {_id: {age: "$age", fname: "$fname"} } } ).pretty()
+{ "_id" : { "age" : 20, "fname" : "Bharath" } }
+{ "_id" : { "age" : 27, "fname" : "Bharat" } }
+{ "_id" : { "fname" : "Chinnu" } }
+{ "_id" : { "age" : 40, "fname" : "Lorem" } }
+{ "_id" : { "age" : 30, "fname" : "Dsaa" } }
+{ "_id" : { "age" : 24, "fname" : "Lord" } }
+{ "_id" : { "age" : 30, "fname" : "Divine " } }
+{ "_id" : { "age" : 34, "fname" : "Rewwe" } }
+
+
+d. Count Opertaion
+
+> db.cust_details.aggregate( { $count: "age" } ).pretty()
+{ "age" : 8 }
+
+
+e. Sorting ( -1 indicates descending order )
+
+> db.cust_details.aggregate( { $sort: { age: -1 } } ).pretty()
+{
+	"_id" : ObjectId("606ed7f05ac9b1ff7baaf12a"),
+	"fname" : "Lorem",
+	"lname" : "Epsum",
+	"age" : 40,
+	"email" : "loremk@gmail.com",
+	"phone" : 7883908756,
+	"experience" : 5
+}
+{
+	"_id" : ObjectId("606ed7f05ac9b1ff7baaf126"),
+	"fname" : "Rewwe",
+	"lname" : "Urjufh",
+	"age" : 34,
+	"email" : "awewc@gmail.com",
+	"phone" : 123908756,
+	"experience" : 12
+}
+{
+	"_id" : ObjectId("606ed4855ac9b1ff7baaf124"),
+	"fname" : "Divine ",
+	"lname" : "Comed",
+	"age" : 30,
+	"email" : "abc@gmail.com",
+	"phone" : 1234556,
+	"experience" : 5
+}
+{
+	"_id" : ObjectId("606ed7625ac9b1ff7baaf125"),
+	"fname" : "Dsaa",
+	"lname" : "Revert",
+	"age" : 30,
+	"email" : "abuu@gmail.com",
+		"lname" : "Rai",
+	"age" : 27,
+	"email" : "bahart@gmail.com",
+	"phone" : 943214556,
+	"experience" : 9
+}
+{
+	"_id" : ObjectId("606ed7f05ac9b1ff7baaf127"),
+	"fname" : "Lord",
+	"lname" : "Montwell",
+	"age" : 24,
+	"email" : "miont@gmail.com",
+	"phone" : 1234559876,
+	"experience" : 2
+}
+{
+	"_id" : ObjectId("606ed1ad5ac9b1ff7baaf123"),
+	"fname" : "Bharath",
+	"lname" : "Kumar",
+	"age" : 20,
+	"email" : "kumar@gmail.com",
+	"phone_no" : 9494035944,
+	"experiance" : 4
+}
+
+
+f. Match and Group
+
+> db.cust_details.aggregate( [ {$match: {experience: 5}}, {$group: {_id: "$age"}} ] ).pretty()
+{ "_id" : 40 }
+{ "_id" : 30 }
+
+"phone" : 1789242,
+	"experience" : 5
+}
+{
+	"_id" : ObjectId("606ed7f05ac9b1ff7baaf128"),
+	"fname" : "Bharat",
+	"lname" : "Rai",
+	"age" : 27,
+	"email" : "bahart@gmail.com",
+	"phone" : 943214556,
+	"experience" : 9
+}
+{
+	"_id" : ObjectId("606ed7f05ac9b1ff7baaf127"),
+	"fname" : "Lord",
+	"lname" : "Montwell",
+	"age" : 24,
+	"email" : "miont@gmail.com",
+	"phone" : 1234559876,
+	"experience" : 2
+}
+{
+	"_id" : ObjectId("606ed1ad5ac9b1ff7baaf123"),
+	"fname" : "Bharath",
+	"lname" : "Kumar",
+	"age" : 20,
+	"email" : "kumar@gmail.com",
+	"phone_no" : 9494035944,
+	"experiance" : 4
+}
+
+
+f. Match and Group
+
+> db.cust_details.aggregate( [ {$match: {experience: 5}}, {$group: {_id: "$age"}} ] ).pretty()
+{ "_id" : 40 }
+{ "_id" : 30 }
+
+                                      Map Reduce Operations
+
+
+> db.cust_pay_details.find().pretty()
+{
+	"_id" : ObjectId("607140bd5e98f148e41e263f"),
+	"cust_id" : "A123",
+	"amount" : 250,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("607140bd5e98f148e41e2640"),
+	"cust_id" : "A123",
+	"amount" : 300,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("607140db5e98f148e41e2641"),
+	"cust_id" : "B111",
+	"amount" : 150,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("607140db5e98f148e41e2642"),
+	"cust_id" : "A123",
+	"amount" : 350,
+	"status" : "D"
+}
+ 
+                                  
+> db.cust_pay_details.mapReduce(
+... function() { emit( this.cust_id, this.amount); },
+... function( key, values ) { return Array.sum( values ) }, 
+... { query: { status: 'A' }, out: "active_orders_pay" }
+... )
+{ "result" : "active_orders_pay", "ok" : 1 }
+
+
+> db.active_orders_pay.find().pretty()
+{ "_id" : "A123", "value" : 550 }
+{ "_id" : "B111", "value" : 150 }

@@ -1,0 +1,91 @@
+Steps to execute 
+1. Write the word count program in eclipse ide ( We use java here ).
+
+2. From the eclipse export the code into a jar file (example: WC.jar).
+
+3. Run all the hadoop nodes, 
+    use -> ./start-all.sh (from hadoop-3.2.1/sbin)
+
+4. Check whether all the nodes are running ->  jps  
+
+5. Create a text file (example: words.txt) which consists of different words along with some of them repeated.
+
+7. Put the file into the hdfs from local system,
+    use -> hadoop fs -put words.txt input.txt
+
+8.Then finally run the code,
+    use -> hadoop jar jar_file_name program_name input_file_name output_file_name
+        example: hadoop jar WC.jar WordCount words.txt output.txt
+
+
+Program Code ---> 
+
+// Importing the required java libraries.
+import java.io.IOException;
+import java.util.StringTokenizer;
+
+// Importing the required hadoop libraries.
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+// wordCount class.
+public class wordCount{
+
+	// Tokenizer class which extends the Mapper class.
+	public static class Tokenizermapper extends Mapper<Object, Text, Text, IntWritable>{
+		private static final IntWritable one = new IntWritable();		// one is an object of type IntWritable.
+		private Text word = new Text();				       		// word is an object of type text.
+		
+		// Mapper function.
+		public void map(Object key, Text value, Context context) throws IOException, InterruptedException{
+		
+			StringTokenizer itr = new StringTokenizer(value.toString());	// The line is split into seperate words known as tokens.	
+			while(itr.hasMoreTokens()) {	    			   	// All the words are iterated one by one as tokens.
+				word.set(itr.nextToken());
+				context.write(word, one);   				// Each word is taken as a key and is assigned value 1 to it.
+			}
+		}	
+	}
+	
+	// Integer Sum Reducer class which extends the Reducer class.
+	public static class IntSumReducer extends Reducer<Text, IntWritable, Text, IntWritable>{
+		private IntWritable result = new IntWritable();				// result is an object of type IntWritable.
+		
+		// Reducer function.
+		public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException{
+			int sum = 0; 				// Sum is set to 0.
+			
+			for(IntWritable val: values) {		// For each word, if the same word is found the value assigned is incremented by 1.
+				sum = sum + val.get();
+			}
+			result.set(sum);			// The final count of each word is set.
+			context.write(key, result);		// The result is written to the context.
+		}
+	}
+	
+	// The main function.
+	public static void main(String[] args) throws Exception{
+		
+		Configuration conf = new Configuration();			// conf is an object of type Configuration.
+		Job job = new Job.getInstance(conf, "word count");		// The name of job is assigned by creating an object job of type Job. 
+		job.setJarByClass(wordCount.class);				// Setting up the Jar class.
+		job.setMapperClass(TokenizerMapper.class);			// Setting up the Mapper class.
+		job.setCombinerClass(IntSumReducer.class);			// Setting up the Combiner class.
+		job.setReducerClass(IntSumReducer.class);			// Setting up the Reducer class.
+		job.setOutputKeyClass(Text.class);				// Setting up the Output class where key resides.
+		job.setOutputValueClass(IntWritable.class);			// Setting up the Output class where the values reside.
+										// The job runs the classes one by one in the specified order
+		FileInputFormat.addInputPath(job, new Path(args[0]));		// Input format and input are extracted from the path.
+		FileOutputFormat.setOutputPath(job, new Path(args[1]));		/* Output format is extracted from the path and output
+											is written to the file specified in the path. */
+		System.exit(job.waitForCompletion(true) ? 0 : 1);		// System waits until the job is completed and then exits.
+		
+	}
+}
